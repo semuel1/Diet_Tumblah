@@ -7,8 +7,19 @@ router.get('/google/callback',
     googlePassport.authenticate('google', { failureRedirect: '/auth/google', session: false }),
     (req, res) => {
         // Successful authentication
-        // console.log(req.user)
-        const payload = req.user._json
+        console.log(req.user)
+
+        const payload = {
+            provider: req.user.provider,
+            provider_id: req.user.id,
+            displayName: req.user.displayName,
+            name: {
+                familyName: req.user.name.familyName,
+                givenName: req.user.name.givenName,
+                middleName: req.user.name.middleName
+            },
+            photos: req.user.photos
+        }
         // console.log(payload)
         const token = jwt.sign(payload, 'A VERY SECRET SECRET', { expiresIn: 3600 })
 
