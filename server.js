@@ -17,6 +17,8 @@ app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(cors())
+app.set('view engine', 'ejs')
+app.use(express.static(__dirname + '/client/build/'))
 // Initialize passport
 app.use(googlePassport.initialize())
 
@@ -25,7 +27,7 @@ app.use('/auth', require('./controllers/authController'))
 
 // Routes
 app.get('/', (req, res) => {
-    res.json({ msg: 'hello world! '})
+    res.json({ msg: 'Hello world!' })
 })
 
 // Listen!
