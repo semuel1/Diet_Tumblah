@@ -1,13 +1,14 @@
+// Most user schemas from various providers will conform this this general format:
 // http://www.passportjs.org/docs/profile/
+// https://tools.ietf.org/html/draft-smarr-vcarddav-portable-contacts-00
+
 const mongoose = require('mongoose')
 
 const UserSchema = new mongoose.Schema({
-    // Where the user authenticated from (Google, Github)
-    provider: {
+    provider: { // Where the user authenticated from (Google, Github)
         type: String,
     },
-    // The provider's id
-    provider_id: {
+    provider_id: { // The user id from the provider
         type: String,
     },
     displayName: {

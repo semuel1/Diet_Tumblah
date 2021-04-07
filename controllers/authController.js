@@ -1,15 +1,17 @@
-const googlePassport = require('../config/googlePpConfig')
-const githubPassport = require('../config/githubPpConfig')
 const router = require('express').Router()
 const jwt = require('jsonwebtoken')
+const googlePassport = require('../config/googlePpConfig')
+const githubPassport = require('../config/githubPpConfig')
 
 // Google Oauth
+// https://developers.google.com/identity/protocols/oauth2/scopes
 router.get('/google', googlePassport.authenticate('google', { scope: ['profile'] }))
 router.get('/google/callback',
-    googlePassport.authenticate('google', { failureRedirect: '/auth/google', session: false }),
+    // We're not using sessions, use session: false!
+    googlePassport.authenticate('google', { failureRedirect: '/auth/google', session: false }), 
     function(req, res) {
         // Successful authentication
-        // console.log("The user data!", req.user)// The user data we get from google!
+        // console.log("The user data!", req.user) // The user data we get from google!
 
         const payload = {
             provider: req.user.provider,
@@ -18,12 +20,15 @@ router.get('/google/callback',
             name: {
                 familyName: req.user.name.familyName,
                 givenName: req.user.name.givenName,
+                middleName: req.user.name.middleName
             },
             photos: req.user.photos
         }
         console.log('the payload', payload)
-        const token = jwt.sign(payload, 'A VERY SECRET SECRET', { expiresIn: 3600 })
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 })
 
+        // Important - redirect from the Server's URL (localhost:8000 or heroku or other server host)
+        // to the client's URL (localhost:3000 or netlify, or other client host)
         res.redirect(`${process.env.CLIENT_URL}/saveToken?token=${token}`)
     }
 )
@@ -35,7 +40,8 @@ router.get('/github/callback',
     githubPassport.authenticate('github', { failureRedirect: '/auth/github', session: false }),
     function (req, res) {
         // Successful authentication
-        console.log("The user data!", req.user) // The user data we get from github!
+        // console.log("The user data!", req.user) // The user data we get from github!
+
         const payload = {
             provider: req.user.provider,
             provider_id: req.user.provider_id,
@@ -47,9 +53,10 @@ router.get('/github/callback',
             },
             photos: req.user.photos
         }
-        console.log(payload)
-        const token = jwt.sign(payload, 'A VERY SECRET SECRET', { expiresIn: 3600 })
+        console.log('the payload', payload)
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 })
 
         res.redirect(`${process.env.CLIENT_URL}/saveToken?token=${token}`);
     });
+    
 module.exports = router

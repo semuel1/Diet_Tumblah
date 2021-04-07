@@ -18,16 +18,13 @@ passport.use(new Strategy({
     callbackURL: `/auth/google/callback`
 },
     async function (accessToken, refreshToken, profile, cb) {
-        // In this example, the user's Google profile is supplied as the user
-        // record.  In a production-quality application, the Google profile should
-        // be associated with a user record in the application's database, which
-        // allows for account linking and authentication with other identity
-        // providers.
+        // profile is the Google User object we get from Google
         const user = await User.findOne({
             provider: profile.provider,
             provider_id: profile.id
         })
-        console.log('user', user)
+        // console.log('The user from our database', user)
+
         if(!user) {
             const newUser = await User.create({
                 provider: profile.provider,
@@ -40,7 +37,8 @@ passport.use(new Strategy({
                 },
                 photos: profile.photos
             })
-            console.log('newuser', user)
+            // console.log('New user saved in database', newUser)
+
             // We just created a user, return that user
             return cb(null, newUser)
         } else {
