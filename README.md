@@ -31,6 +31,8 @@ User Schema roughly adheres to this normalized format:
 | GET | `/auth/google/callback` | Handle the redirect back from Google with the user's data after sign in |
 | GET | `/auth/github` | Passport redirects to Github to sign in |
 | GET | `/auth/github/callback` | Handle the redirect back from Github with the user's data after sign in |
+| GET | `/exampleResource` | An example route that only allows authenticated users access. Utilizes our custom built `authenticateJWT` middleware |
+
 
 # Installation
 ## 1. Fork the repo, then clone it down to your local machine

@@ -8,12 +8,13 @@ const githubPassport = require('../config/githubPpConfig')
 router.get('/google', googlePassport.authenticate('google', { scope: ['profile'] }))
 router.get('/google/callback',
     // We're not using sessions, use session: false!
-    googlePassport.authenticate('google', { failureRedirect: '/auth/google', session: false }), 
-    function(req, res) {
+    googlePassport.authenticate('google', { failureRedirect: '/auth/google', session: false }),
+    function (req, res) {
         // Successful authentication
         // console.log("The user data!", req.user) // The user data we get from google!
 
         const payload = {
+            _id: req.user._id,
             provider: req.user.provider,
             provider_id: req.user.id,
             displayName: req.user.displayName,
@@ -24,7 +25,7 @@ router.get('/google/callback',
             },
             photos: req.user.photos
         }
-        console.log('the payload', payload)
+        // console.log('the payload', payload)
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 })
 
         // Important - redirect from the Server's URL (localhost:8000 or heroku or other server host)
@@ -43,6 +44,7 @@ router.get('/github/callback',
         // console.log("The user data!", req.user) // The user data we get from github!
 
         const payload = {
+            _id: req.user._id,
             provider: req.user.provider,
             provider_id: req.user.provider_id,
             displayName: req.user.displayName,
@@ -53,10 +55,10 @@ router.get('/github/callback',
             },
             photos: req.user.photos
         }
-        console.log('the payload', payload)
+        // console.log('the payload', payload)
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 })
 
         res.redirect(`${process.env.CLIENT_URL}/saveToken?token=${token}`);
     });
-    
+
 module.exports = router

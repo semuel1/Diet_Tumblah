@@ -22,6 +22,7 @@ app.use(passport.initialize())
 
 // Controllers
 app.use('/auth', require('./controllers/authController'))
+app.use('/exampleResource', require('./controllers/exampleResource'))
 
 // Routes
 app.get('/', (req, res) => {
