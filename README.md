@@ -64,9 +64,9 @@ Profile "/profile"
 
 Logout "/logout"
 
-### Schema:
+### Wireframe:
 
-![schema](./WireFrame/schema.png)
+
 
 ### Technologies and APIs:
 
