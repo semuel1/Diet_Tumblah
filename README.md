@@ -1,125 +1,73 @@
-# OAuth Boilerplate - Server
-This is a boilerplate for an Express app using Passport.js with Google and Github OAuth strategies for Authentication, using JWTs for Authorization, with a MongoDB backend for saving user data.
+#Diet Tumblr 
+1. How do you plan on learning/implementing this new technology?
+ MernAuth
+
+2. What is your goal with this project?
+TO be able to display a feed or dashboard
+
+3. Who is the user for your app?
+teens and young adults
+4. Any potential roadblocks you think you might run into?
+learning a new technology
 
 
-## Included Models
-User Schema roughly adheres to this normalized format:
-* http://www.passportjs.org/docs/profile/
-* https://tools.ietf.org/html/draft-smarr-vcarddav-portable-contacts-00
+### Description:
+Diet_Tumblr will be a social media based app with very limited features. Youll be able to login and out as a user, like and comment on photos and reblog them to your own profile. This app is made for bloggers who log to share their thoughts digitally 
 
-### User
-| Column | Type | Notes |
-| ----------- | ---------- | ---------------------------- |
-| _id | ObjectId | Primary key automatically added by MongoDB |
-| provider | String | Where the user authenticated from (Google, Github, etc.) |
-| provider_id | String | The id given to the user by provider |
-| displayName | String |  |
-| name | Object | name is an object containing three more key-value pairs |
-| name.givenName | String |  |
-| name.middleName | String |  |
-| name.familyName | String |  |
-| photos | Array | Array of Objects with key "value" |
-| createdAt | Date | Automatically added by MongoDB |
-| updatedAt | Date | Automatically added by MongoDB |
+### User Story:
 
-## Routes
+1.  The user first sees the log in page. They are given the option to sign in or sign up.
 
-| Method | Path | Purpose |
-| ------ | ---------------------- | ---------------------------- |
-| GET | `/` | Hello World! |
-| GET | `/auth/google` | Passport redirects to Google to sign in |
-| GET | `/auth/google/callback` | Handle the redirect back from Google with the user's data after sign in |
-| GET | `/auth/github` | Passport redirects to Github to sign in |
-| GET | `/auth/github/callback` | Handle the redirect back from Github with the user's data after sign in |
-| GET | `/exampleResource` | An example route that only allows authenticated users access. Utilizes our custom built `authenticateJWT` middleware |
+2.  Once logged in the user's home page greets them. It also reveals the navigation bar.
 
+3.  The navigation bar offers 3 choices:
 
-# Installation
-## 1. Clone the repo down to your local machine
-`git clone <repo_link> <new_name>`
+    a. Logout
 
-## 2. Install dependencies
-`npm install`
+    b. Profile
 
-## 3. Create `.env` file for environment variables
-**If you don't have a Google or Github application yet, scroll down below and refer to OAuth Provider Signup**
-```
-GOOGLE_CLIENT_ID=<your id from google>
-GOOGLE_CLIENT_SECRET=<your secret from google>
-GITHUB_CLIENT_ID=<your id from github>
-GITHUB_CLIENT_SECRET=<your secret from github>
-CLIENT_URL='http://localhost:3000 --- OR the url to your hosted client'
-JWT_SECRET='A very secret secret of your own making'
-```
+    c. Dashboard
 
-## 4. Run the server 
-`node server.js`
+4.  The user's profile displays a varity of post and likes that the user has added to their page.
 
-## 5. Delete the origin that points to the boilerplate repository
-Currently if we run this command:
+5.  The user can create post via clicking "post" on the dashboard.
 
-`git remote -v`
+6.  Log out returns you to the sign in page.
 
-It will show origin as being hooked up to the boilerplate repository. We want a fresh repository instead, so let's delete the origin remote:
+### MVP:
 
-`git remote remove origin`
-## 6. Create an empty git repository
-Via the Github website. Follow directions as they show up when you create a new repository:
-```
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin <new_repo_link>
-git push origin main
-```
+1. 4 pages in Schema (Login, Profile, Dashboard & Logout).
 
-# OAuth Provider Signup
-## Google
-**Instructions can also be found here:**
+2. oAuth for a secure login.
 
-https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred
+3. Post save to profile and user can create post via Dashboard
 
----
-### Create the Google App
-1. Navigate to console.cloud.google.com and head to APIs & Services > Dashboard
-![dashboard](./readme_images/dashboard.png)
-2. Click on 'Select a project', click on 'NEW PROJECT', and create the project
-![select project](./readme_images/select_project.png)
-![new project](./readme_images/new_project.png)
+4. A nav bar with routes.
 
-4. Click on Configure Consent Screen
-5. User Type 'External' then click Create
-![usertype external](./readme_images/user_type.png)
-6. Set up your App name, User Support Email and click 'Save and Continue'
-7. Click Add or Remove Scopes and add the 'profile' scope
-![scope](./readme_images/scope.png) 
-9. Publish the App
-![publish](./readme_images/publish.png) 
+5. A log out page that removes you oauth data, and routes you back to the login page.
 
----
-### Create the Credentials
-1. Click on Credentials and click on Create Credentials > OAuth clientID
-![clientid](./readme_images/oauth_clientid.png)
-2. Go through the setup steps:
+### Stretch:
 
-* Application type - Web application
-* Authorized JavaScript Origins
-* Authorized Redirect URIs
+1. Set up commenting on post
 
-![clientid](./readme_images/uris.png)
+2. Music on profile page
 
-3. The next popup modal will give you your Client ID and your Client Secret!
+3. User can upload their own profile pictures
 
-**KEEP THESE SECRET AND SAFE in your `.env` file!**
+### Routes:
 
----
-## Github
-Instructions are found here: 
+Login "/login"
 
-https://docs.github.com/en/developers/apps/creating-an-oauth-app
+Dashboard "/"
 
-These instructions are pretty good - so follow them!
+Profile "/profile"
 
-The URL and callback URL will end up looking like this:
+Logout "/logout"
 
-![github](./readme_images/github.png)
+### Schema:
+
+![schema](./WireFrame/schema.png)
+
+### Technologies and APIs:
+
+React, Mongoose, MongoDB, oAuth, Express, CSS, html, Javascript, Rowdy-Logger, Morgan, React-Router-Dom, Canvas,
