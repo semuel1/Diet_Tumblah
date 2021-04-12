@@ -9,7 +9,7 @@ const passport = require('passport')
 
 // Variables
 const app = express()
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 3000
 const rowdyResults = rowdy.begin(app)
 
 // Middleware
