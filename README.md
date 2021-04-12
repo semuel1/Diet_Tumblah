@@ -65,6 +65,7 @@ Profile "/profile"
 Logout "/logout"
 
 ### Wireframe:
+![image](https://user-images.githubusercontent.com/47265961/114422939-8fb8f000-9b6b-11eb-9aa4-183e41591c3d.png)
 
 
 
