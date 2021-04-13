@@ -9,7 +9,7 @@ const passport = require('passport')
 
 // Variables
 const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 8000
 const rowdyResults = rowdy.begin(app)
 
 // Middleware
@@ -22,7 +22,7 @@ app.use(passport.initialize())
 
 // Controllers
 app.use('/auth', require('./controllers/authController'))
-app.use('/exampleResource', require('./controllers/exampleResource'))
+app.use('/postMessage', require('./controllers/postMessage'))
 
 // Routes
 app.get('/', (req, res) => {
