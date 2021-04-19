@@ -1,30 +1,10 @@
-// Most user schemas from various providers will conform this this general format:
-// http://www.passportjs.org/docs/profile/
-// https://tools.ietf.org/html/draft-smarr-vcarddav-portable-contacts-00
+import mongoose from "mongoose";
 
-const mongoose = require('mongoose')
+const userSchema = mongoose.Schema({
+  name: { type: String, required:  true },
+  email: { type: String, required: true },
+  password: { type: String, required: true },
+  id: { type: String },
+});
 
-const UserSchema = new mongoose.Schema({
-    provider: { // Where the user authenticated from (Google, Github)
-        type: String,
-    },
-    provider_id: { // The user id from the provider
-        type: String,
-    },
-    displayName: {
-        type: String,
-        required: true
-    },
-    name: {
-        familyName: String,
-        givenName: String,
-        middleName: String
-    },
-    photos: [{
-        value: String
-    }],
-}, {
-    timestamps: true
-})
-
-module.exports = User = mongoose.model('user', UserSchema)
+export default mongoose.model("User", userSchema);

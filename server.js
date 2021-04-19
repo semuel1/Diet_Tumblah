@@ -1,36 +1,25 @@
-// Required Modules
-require('dotenv').config()
-require('./models') // Connect to MongoDB
-const express = require('express')
-const rowdy = require('rowdy-logger')
-const morgan = require('morgan')
-const cors = require('cors')
-const passport = require('passport')
+import express from 'express';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import cors from 'cors';
 
-// Variables
-const app = express()
-const PORT = process.env.PORT || 8000
-const rowdyResults = rowdy.begin(app)
+import postRoutes from './routes/posts.js';
+import userRouter from "./routes/user.js";
 
-// Middleware
-app.use(morgan('dev'))
-app.use(express.urlencoded({ extended: false }))
-app.use(express.json())
-app.use(cors())
-// Initialize passport
-app.use(passport.initialize())
+const app = express();
 
-// Controllers
-app.use('/auth', require('./controllers/authController'))
-app.use('/postMessage', require('./controllers/postMessage'))
+app.use(bodyParser.json({ limit: '30mb', extended: true }))
+app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
+app.use(cors());
 
-// Routes
-app.get('/', (req, res) => {
-    res.json({ msg: 'Hello world!' })
-})
+app.use('/posts', postRoutes);
+app.use("/user", userRouter);
 
-// Listen!
-app.listen(PORT, () => {
-    rowdyResults.print()
-    console.log(`Server listening on port ${PORT} 🌊`)
-})
+const CONNECTION_URL = 'mongodb://root:4AacDf9Tva@memories-mongo-production/admin?retryWrites=true&w=majority';
+const PORT = process.env.PORT|| 5000;
+
+mongoose.connect(CONNECTION_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => app.listen(PORT, () => console.log(`Server Running on Port: http://localhost:${PORT}`)))
+  .catch((error) => console.log(`${error} did not connect`));
+
+mongoose.set('useFindAndModify', false);

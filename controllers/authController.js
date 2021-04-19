@@ -1,64 +1,48 @@
-const router = require('express').Router()
-const jwt = require('jsonwebtoken')
-const googlePassport = require('../config/googlePpConfig')
-const githubPassport = require('../config/githubPpConfig')
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-// Google Oauth
-// https://developers.google.com/identity/protocols/oauth2/scopes
-router.get('/google', googlePassport.authenticate('google', { scope: ['profile'] }))
-router.get('/google/callback',
-    // We're not using sessions, use session: false!
-    googlePassport.authenticate('google', { failureRedirect: '/auth/google', session: false }),
-    function (req, res) {
-        // Successful authentication
-        // console.log("The user data!", req.user) // The user data we get from google!
+import UserModal from "../models/user.js";
 
-        const payload = {
-            _id: req.user._id,
-            provider: req.user.provider,
-            provider_id: req.user.id,
-            displayName: req.user.displayName,
-            name: {
-                familyName: req.user.name.familyName,
-                givenName: req.user.name.givenName,
-                middleName: req.user.name.middleName
-            },
-            photos: req.user.photos
-        }
-        // console.log('the payload', payload)
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 })
+const secret = 'test';
 
-        // Important - redirect from the Server's URL (localhost:8000 or heroku or other server host)
-        // to the client's URL (localhost:3000 or netlify, or other client host)
-        res.redirect(`${process.env.CLIENT_URL}/saveToken?token=${token}`)
-    }
-)
+export const signin = async (req, res) => {
+  const { email, password } = req.body;
 
-// Github Oauth
-// https://docs.github.com/en/developers/apps/scopes-for-oauth-apps
-router.get('/github', githubPassport.authenticate('github', { scope: ['read:user'] }))
-router.get('/github/callback',
-    githubPassport.authenticate('github', { failureRedirect: '/auth/github', session: false }),
-    function (req, res) {
-        // Successful authentication
-        // console.log("The user data!", req.user) // The user data we get from github!
+  try {
+    const oldUser = await UserModal.findOne({ email });
 
-        const payload = {
-            _id: req.user._id,
-            provider: req.user.provider,
-            provider_id: req.user.provider_id,
-            displayName: req.user.displayName,
-            name: {
-                familyName: req.user.name.familyName,
-                givenName: req.user.name.givenName,
-                middleName: req.user.name.middleName
-            },
-            photos: req.user.photos
-        }
-        // console.log('the payload', payload)
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: 3600 })
+    if (!oldUser) return res.status(404).json({ message: "User doesn't exist" });
 
-        res.redirect(`${process.env.CLIENT_URL}/saveToken?token=${token}`);
-    });
+    const isPasswordCorrect = await bcrypt.compare(password, oldUser.password);
 
-module.exports = router
+    if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" });
+
+    const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, { expiresIn: "1h" });
+
+    res.status(200).json({ result: oldUser, token });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export const signup = async (req, res) => {
+  const { email, password, firstName, lastName } = req.body;
+
+  try {
+    const oldUser = await UserModal.findOne({ email });
+
+    if (oldUser) return res.status(400).json({ message: "User already exists" });
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const result = await UserModal.create({ email, password: hashedPassword, name: `${firstName} ${lastName}` });
+
+    const token = jwt.sign( { email: result.email, id: result._id }, secret, { expiresIn: "1h" } );
+
+    res.status(201).json({ result, token });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+    
+    console.log(error);
+  }
+};
